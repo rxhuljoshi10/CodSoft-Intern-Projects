@@ -33,6 +33,7 @@ class Student implements Serializable{
 class StudentManagementSystem{
     private List<Student> studentsList;
     private final String dataFile = "C:\\Users\\joshi\\Documents\\Programs\\CodSoft-Intern-Projects\\Student Management System\\students.dat";
+
     StudentManagementSystem(){
         studentsList = new ArrayList<>();
         fetchStudentsData();
@@ -43,9 +44,14 @@ class StudentManagementSystem{
         saveStudentsData();
     }
 
-    public void removeStudent(int rno){
+    public boolean removeStudent(int rno){
+        int studentCount = studentsList.size();
         studentsList.removeIf(student -> student.getRno() == rno);
-        saveStudentsData();
+        if(studentsList.size() < studentCount){
+            saveStudentsData();
+            return true;
+        }
+        return false;
     }
 
     public Student searchStudent(int rno){
@@ -63,7 +69,7 @@ class StudentManagementSystem{
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(dataFile))) {
             studentsList = (List<Student>) ois.readObject();
         } catch (Exception e) {
-            e.printStackTrace();
+            // e.printStackTrace();
         }
     }
 
@@ -71,7 +77,7 @@ class StudentManagementSystem{
         try(ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(dataFile))){
             oos.writeObject(studentsList);
         }catch (Exception e) {
-            e.printStackTrace();
+            // e.printStackTrace();
         }
     }
 }
@@ -85,8 +91,9 @@ class Main{
         system = new StudentManagementSystem();
 
         while(true){
-            System.out.println("\n\t*Student Management System*\n");
-            System.out.println("1 : Add Student");
+            clearScreen();
+            System.out.println("\n\t*Student Management System*");
+            System.out.println("\n1 : Add Student");
             System.out.println("2 : Remove Student");
             System.out.println("3 : Search Student");
             System.out.println("4 : Display Students");
@@ -111,14 +118,14 @@ class Main{
                     return;
                 default:
                     System.out.println("Invalid choice!");
-
             }
+            showContinueOption();
         }
     }
 
     private static void inputStudentDetails(){
-        System.out.print("\033[H\033[2J");
-        System.out.println("\tEnter Student Details\n");
+        clearScreen();
+        System.out.println("\n\tEnter Student Details\n");
         System.out.print("Name : ");
         String name = scanner.next();
 
@@ -130,7 +137,8 @@ class Main{
                 break;
             } 
             catch(Exception e){
-                System.out.println("Invalid Roll Number! Please enter again.");
+                System.out.println("\nInvalid Roll Number! Please enter again.");
+                scanner.next();
             }
         }
 
@@ -143,27 +151,51 @@ class Main{
     }
 
     private static void removeStudentInput(){
+        clearScreen();
         System.out.print("\nEnter Roll number of student to be removed : ");
         int rno = scanner.nextInt();
-        system.removeStudent(rno);
-        System.out.println("\nStudent removed successfully!");
+        if(system.removeStudent(rno)){
+            System.out.println("\nStudent removed successfully!");
+        }
+        else{
+            System.out.println("\nStudent not found!");
+        }
     }
 
     private static void searchStudentInput(){
-        System.out.print("\nEnter Roll number of student to be removed : ");
+        clearScreen();
+        System.out.print("\nEnter Roll number of student to be searched : ");
         int rno = scanner.nextInt();
         Student student = system.searchStudent(rno);
         if(student != null){
-            System.out.println("\n"+student.name);
+            displayStudent(student, 1);
         }
         else{
             System.out.println("\nStudent Not Found!");
         }
     }
+
     public static void displayStudents(){
-        System.out.print("\033[H\033[2J");
+        clearScreen();
+        System.out.println("\n\tStudents List");
+        System.out.println("");
+        int index = 1;
         for(Student student : system.getAllStudents()){
-            System.out.println(student.name);
+            displayStudent(student, index++);
         }
+    }
+
+    public static void displayStudent(Student student, int index){
+        System.out.println(index+". "+student.name+"\t"+student.rno+"\t"+student.grade);
+    }
+
+    public static void showContinueOption(){
+        System.out.print("\n\nPress 'Enter' to continue..! ");
+        Scanner sc = new Scanner(System.in);
+        sc.nextLine();
+    }
+
+    public static void clearScreen(){
+        System.out.print("\033[H\033[2J");
     }
 }
