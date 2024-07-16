@@ -4,7 +4,6 @@ import java.io.*;
 class Student implements Serializable{
     int rno;
     String name;
-    // long number;
     String grade;
 
     public Student(int rno, String name, String grade){
@@ -64,6 +63,11 @@ class StudentManagementSystem{
         return null;
     }
 
+    public void modifyStudent(Student student){
+        removeStudent(student.rno);
+        addStudent(student);
+    }
+
     public List<Student> getAllStudents(){
         return studentsList;
     }
@@ -101,7 +105,8 @@ class Main{
             System.out.println("2 : Remove Student");
             System.out.println("3 : Search Student");
             System.out.println("4 : Display Students");
-            System.out.println("5 : Exit");
+            System.out.println("5 : Modify Student");
+            System.out.println("6 : Exit");
             System.out.print("\nEnter your choice : ");
             int choice = scanner.nextInt();
 
@@ -119,6 +124,9 @@ class Main{
                     displayStudents();
                     break;
                 case 5:
+                    modifyStudentInput();
+                    break;
+                case 6:
                     return;
                 default:
                     System.out.println("Invalid choice!");
@@ -191,6 +199,44 @@ class Main{
 
     public static void displayStudent(Student student, int index){
         System.out.println(index+". "+student.name+"\t"+student.rno+"\t"+student.grade);
+    }
+
+    public static void modifyStudentInput(){
+        clearScreen();
+        System.out.print("\nEnter Roll number of student to be edited : ");
+        int rno = scanner.nextInt();
+        Student student = system.searchStudent(rno);
+        if(student != null){
+            displayStudent(student, 1);
+            modifyDetails(student);
+            System.out.println("\nModified Succesfully!");
+        }
+        else{
+            System.out.println("\nStudent Not Found!");
+        }
+    }
+
+    public static void modifyDetails(Student student){
+        System.out.println("\n1 : Name ");
+        System.out.println("2 : Roll Number ");
+        System.out.println("3 : Grade ");
+        System.out.print("\nChoose what to modify? : ");
+        int choice = scanner.nextInt(); 
+        switch(choice){
+            case 1:
+                System.out.print("Enter New Name : ");
+                student.setName(scanner.next());
+                break;
+            case 2:
+                System.out.print("Enter New Roll Number : ");
+                student.setRno(scanner.nextInt());
+                break;
+            case 3:
+                System.out.print("Enter New Grade : ");
+                student.setGrade(scanner.next());
+                break;
+        }
+        system.modifyStudent(student);
     }
 
     public static void showContinueOption(){
