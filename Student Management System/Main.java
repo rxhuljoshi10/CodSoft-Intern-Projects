@@ -22,13 +22,16 @@ class Student implements Serializable{
     void setName(String name){
         this.name = name;
     }
+
     void setRno(int rno){
         this.rno = rno;
     }
+
     void setGrade(String grade){
         this.grade = grade;
     }
 }
+
 
 class StudentManagementSystem{
     private List<Student> studentsList;
@@ -86,6 +89,7 @@ class StudentManagementSystem{
 class Main{
     static Scanner scanner;
     static StudentManagementSystem system;
+
     public static void main(String[] args){
         scanner = new Scanner(System.in);
         system = new StudentManagementSystem();
